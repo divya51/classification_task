@@ -20,9 +20,9 @@ from  keras import losses
 from keras.preprocessing.image import ImageDataGenerator
 
 import pickle 
-train_images_path = ../Train/
-val_images_path= ../Val/
-weights_path   = ../weights.h5
+train_images_path = '../Train/'
+val_images_path= '../Val/'
+weights_path   = '../weights.h5'
 train_batch_size =32
 val_batch_size=16
 
