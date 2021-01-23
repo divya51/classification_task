@@ -18,6 +18,17 @@ from sklearn.metrics import accuracy_score
 import matplotlib.pyplot as plt
 from PIL import Image
 import scipy.io
+
+def load_images_from_folder(folder):
+	images = [];
+	for filename in os.listdir(folder):
+		if filename.endswith(".png"):
+			img = cv2.imread(os.path.join(folder, filename))
+			img = cv2.resize(img, ( 224 , 224 ))
+			if img is not None:
+				images.append(img)
+	return images
+
 def Imagearr(root_folder):
 	labels=[]
 	folders = [os.path.join(root_folder, x) for x in ('Uninfected', 'Parasite')]
