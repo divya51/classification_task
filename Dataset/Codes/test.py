@@ -52,7 +52,7 @@ y_pred=m.predict_classes(X_test)
 l=list(y_pred)
 sc=accuracy_score(y_test, y_pred)
 sc=np.around(sc, decimals=3)
-print(sc)
+print('classification accuracy', sc)
 
 
 
