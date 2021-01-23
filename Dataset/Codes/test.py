@@ -18,6 +18,7 @@ from sklearn.metrics import accuracy_score
 import matplotlib.pyplot as plt
 from PIL import Image
 import scipy.io
+import cv2
 
 def load_images_from_folder(folder):
 	images = [];
