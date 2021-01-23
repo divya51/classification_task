@@ -18,11 +18,13 @@ import itertools
 from keras import backend as K
 from  keras import losses
 from keras.preprocessing.image import ImageDataGenerator
+from pickle import load
+import matplotlib.pyplot as plt
 
 import pickle 
 train_images_path = '../Train/'
 val_images_path= '../Val/'
-weights_path   = '../weights.h5'
+weights_path   = 'cnnweights.h5'
 train_batch_size =32
 val_batch_size=16
 
@@ -53,10 +55,14 @@ def Imagearr(root_folder):
 
 
 m=modelcnnnew.cnn_oc()
+modeldir= 'models_dir/'
+if not os.path.exists(modeldir):
+	os.makedirs(modeldir)
+model_name='cnnweights'
 m.compile(loss='binary_crossentropy',optimizer=keras.optimizers.Adam(), metrics=['accuracy'])
 
 early_stopping_callback = keras.callbacks.EarlyStopping(monitor='val_loss', patience=5)
-checkpoint_callback = keras.callbacks.ModelCheckpoint(weights_path, monitor='val_loss', verbose=1, save_best_only=True, mode='min')
+checkpoint_callback = keras.callbacks.ModelCheckpoint('models_dir/'+model_name+'.h5', monitor='val_loss', verbose=1, save_best_only=True, mode='min')
 
 x_train,y_train=Imagearr(train_images_path)
 train_img_num=len(x_train)
@@ -72,10 +78,43 @@ val_datagen=ImageDataGenerator(rescale=1./255)
 G  =  train_datagen.flow(np.array(x_train), y_train, batch_size=train_batch_size )
 G2  = val_datagen.flow(np.array(x_val), y_val, batch_size=val_batch_size)
 history=m.fit_generator( G , steps_per_epoch=train_img_num/train_batch_size,  validation_data=G2 , validation_steps=val_img_num//val_batch_size ,  epochs=70, callbacks=[early_stopping_callback,checkpoint_callback])
-checkname='trainHistory'
-checkname+='_'+str(len(x_train))
-with open(checkname, 'wb') as file_pi:
-	pickle.dump(history.history, file_pi)
+if not os.path.exists('HistoryDir/'):
+	os.makedirs('HistoryDir/')
+hist_filename='HistoryDir/'+'cnntraining_history'
+with open(hist_filename ,'wb') as filepi:
+	pickle.dump(history.history,filepi)
+with open(hist_filename, 'rb') as filepi:
+		oldhstry = load(filepi)
+print(oldhstry.keys())
+# Plotting the Accuracy vs Epoch Graph
+plt.plot(oldhstry['accuracy'])
+plt.plot(oldhstry['val_accuracy'])
+plt.title('model accuracy')
+plt.ylabel('accuracy')
+plt.xlabel('epoch')
+plt.legend(['train', 'val'], loc='upper right')
+fig1=plt.gcf()
+#plt.show()
+#plt.close()
+fig1.savefig('HistoryDir/'+'cnn_acc.png')
+plt.clf()
+# Plotting the Loss vs Epoch Graphs
+plt.plot(oldhstry['loss'])
+plt.plot(oldhstry['val_loss'])
+plt.title('model loss')
+plt.ylabel('loss')
+plt.xlabel('epoch')
+plt.legend(['train', 'val'], loc='upper right')
+fig2=plt.gcf()
+#plt.show()
+#plt.draw()
+#plt.close()
+fig2.savefig('HistoryDir/'+'cnn_loss.png')
+plt.clf()
+			
+			
+			
+			
 
 
 

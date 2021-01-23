@@ -32,8 +32,8 @@ def cnn_oc():
     return model
 
 
-m=cnn_oc()
-m.summary()
+#m=cnn_oc()
+#m.summary()
 
 
 
